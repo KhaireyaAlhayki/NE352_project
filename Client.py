@@ -176,7 +176,7 @@ def sources_menu(socket_c):
 def client():
     try:
         socket_c=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        socket_c.connect("127.0.0.1", 8080)
+        socket_c.connect(("127.0.0.1", 49999))
         print("Connected to the server.")
         client_name=input("Enter username: ")
         socket_c.send(client_name.encode())
@@ -198,7 +198,7 @@ def client():
     except ConnectionRefusedError:
         print("Failed connect to the Server.")
     except Exception as error_msg:
-        print("there error ocurred: {error_msg}")
+        print(f"there error ocurred: {error_msg}")
 
 if __name__ == "__main__":
     client()
