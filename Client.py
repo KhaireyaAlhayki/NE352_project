@@ -45,13 +45,16 @@ def headlines_menu(socket_c):
     5-Back to the main menu
     """)
     option=int(input("Enter the number of your option:"))
-    #handle non-existent options
-    while option not in range(1,6):
-         print("Invalid option. Please choose a number between 1 and 5.")
-         option = int(input("Enter the number of your option: "))
-    if option==1:
-        parameter['keyword']=input("Enter the keywords: ")
-    elif option==2:
+    # Handle non-existent options
+    while option not in range(1, 6):
+        print("Invalid option. Please choose a number between 1 and 5.")
+        option = int(input("Enter the number of your option: "))
+    
+    request = ""  # Initialize request variable
+    if option == 1:
+        keyword = input("Enter the keywords: ")
+        request = f"1-1-{keyword}" 
+    elif option == 2:
         print("""
         1-business
         2-general
@@ -60,15 +63,11 @@ def headlines_menu(socket_c):
         5-sports
         6-technology
         """)
-        #To handle non-existent categories numbers
-        while True:
-            catrgory_o=input("Enter the category number(1-6): ")
-            if catrgory_o in categories:
-                parameter['category']=categories.get(catrgory_o)
-                break
-            else:
-             print("Invalid option. Please choose a number between 1 and 6.")
-    elif option==3:
+        category_o = input("Enter the category number (1-6): ")
+        if category_o in categories:
+            category = categories[category_o]
+            request = f"1-2-{category}"  
+    elif option == 3:
         print("""
         1-au
         2-ca
@@ -79,24 +78,21 @@ def headlines_menu(socket_c):
         7-us
         8-ma
         """)
-        #To handle non-existent countries numbers
-        while True:
-            countries_o=input("Enter the category number(1-8): ")
-            if countries_o in countries:
-                parameter['country']=countries.get(countries_o)
-                break
-            else:
-             print("Invalid option. Please choose a number between 1 and 8.")
-    elif option==4:
-        print("Listing all new headlines...")
-    elif option==5:
-        return 
-    #Sending the request with 'menu' as the key to the server
-    request=json.dumps({'menu':'headlines','parameters': parameter})
+        country_o = input("Enter the country number (1-8): ")
+        if country_o in countries:
+            country = countries[country_o]
+            request = f"1-3-{country}"  
+    elif option == 4:
+        request = "1-4-"  
+    elif option == 5:
+        return  # Back to the main menu
+
+    print("Sending request:", request)
     socket_c.send(request.encode())
-    #Receiving the response from the server
-    response=socket_c.recv(4096).decode()
-    print("The received response:" ,response)
+    
+    # Receiving the response from the server
+    response = socket_c.recv(4096).decode()
+    print("The received response:", response)
 
 def sources_menu(socket_c):
     print("\nSources Menu:")
@@ -107,12 +103,15 @@ def sources_menu(socket_c):
     4-List all
     5-Back to the main menu
     """)
-    option=int(input("Enter the number of your option:"))
-    #handle non-existent options
-    while option not in range(1,6):
-         print("Invalid option. Please choose a number between 1 and 5.")
-         option = int(input("Enter the number of your option: "))
-    if option==1:
+    option = int(input("Enter the number of your option:"))
+    
+    # Handle non-existent options
+    while option not in range(1, 6):
+        print("Invalid option. Please choose a number between 1 and 5.")
+        option = int(input("Enter the number of your option: "))
+    
+    request = ""  # Initialize request variable
+    if option == 1:
         print("""
         1-business
         2-general
@@ -121,15 +120,11 @@ def sources_menu(socket_c):
         5-sports
         6-technology
         """)
-        #To handle non-existent categories numbers
-        while True:
-            catrgory_o=input("Enter the category number(1-6): ")
-            if catrgory_o in categories:
-                parameter['category']=categories.get(catrgory_o)
-                break
-            else:
-             print("Invalid option. Please choose a number between 1 and 6.")
-    elif option==2:
+        category_o = input("Enter the category number (1-6): ")
+        if category_o in categories:
+            category = categories[category_o]
+            request = f"2-1-{category}"  
+    elif option == 2:
         print("""
         1-au
         2-ca
@@ -140,37 +135,30 @@ def sources_menu(socket_c):
         7-us
         8-ma
         """)
-        #To handle non-existent countries numbers
-        while True:
-            countries_o=input("Enter the category number(1-8): ")
-            if countries_o in countries:
-                parameter['country']=countries.get(countries_o)
-                break
-            else:
-             print("Invalid option. Please choose a number between 1 and 8.")
-    elif option==3:
+        country_o = input("Enter the country number (1-8): ")
+        if country_o in countries:
+            country = countries[country_o]
+            request = f"2-2-{country}"  
+    elif option == 3:
         print("""
         1-ar
         2-en 
         """)
-        #To handle non-existent languages numbers
-        while True:
-            languages_o=input("Enter the category number(1-2): ")
-            if languages_o in languages:
-                parameter['language']=languages.get(languages_o)
-                break
-            else:
-             print("Invalid option. Please choose a number between 1 and 2.")
-    elif option==4:
-        print("Listing all...")
-    elif option==5:
-        return
-    #Sending the request with 'menu' as the key to the server
-    request=json.dumps({'menu':'sources','parameters': parameter})
+        languages_o = input("Enter the category number (1-2): ")
+        if languages_o in languages:
+            language = languages[languages_o]
+            request = f"2-3-{language}"  
+    elif option == 4:
+        request = "2-4-"  
+    elif option == 5:
+        return  
+    
+    print("Sending request:", request)
     socket_c.send(request.encode())
-    #Receiving the response from the server
-    response=socket_c.recv(4096).decode()
-    print("The received response:" ,response)
+    
+    # Receiving the response from the server
+    response = socket_c.recv(4096).decode()
+    print("The received response:", response)
 
 
 def client():
@@ -202,3 +190,4 @@ def client():
 
 if __name__ == "__main__":
     client()
+
