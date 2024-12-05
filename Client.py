@@ -32,7 +32,7 @@ def main_menu():
     2-List of sources
     3-Quit
     """)
-    choice=int.input("Enter the number of your choice: ")
+    choice=int(input("Enter the number of your choice: "))
     return choice
     
 def headlines_menu(socket_c):
