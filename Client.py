@@ -168,6 +168,10 @@ def client():
         print("Connected to the server.")
         client_name=input("Enter username: ")
         socket_c.send(client_name.encode())
+          
+        welcome_message = socket_c.recv(1024).decode('utf-8')
+        print(welcome_message)
+
         while True:
             choice=main_menu()
             if choice==1:
