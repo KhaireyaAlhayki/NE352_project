@@ -1,5 +1,35 @@
 import socket
 import json
+import tkinter as tk
+from tkinter import messagebox
+#creat tab
+root=tk.Tk()
+root.geometry("500x400")
+root.title("EchoNews")
+#create label for username and entry
+label = tk.Label(root, text="Enter your username:")
+label.pack(padx=10,pady=10)
+username=tk.Entry(root)
+username.pack(padx=10)
+#main menu label
+main_m=tk.Label(root,text="MAIN MENU:")
+main_m.pack(padx=20)
+#create headlines menu
+headlines_m=tk.Button(root,text="Search by Headlines" )
+headlines_m.pack(padx=20,pady=20)
+#create source menu
+source_m=tk.Button(root,text="Search by sources")
+source_m.pack(padx=20,pady=20)
+#create Quit button
+button=tk.Button(root, text="Quit App", command=quit)
+button.pack(padx=20,pady=20)
+
+
+
+
+
+root.mainloop()
+
 
 parameter={}
 categories={
