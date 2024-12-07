@@ -3,9 +3,14 @@ import threading
 import requests
 import json
 import pickle
+import sys
 
 # our group ID defined to be used later
+API__URL = "https://newsapi.org/v2"
+API_KEY= "bd3e726dcacf4398b333004ec24aa233"
 GROUP_ID = "A15"
+
+running = True  # Flag to indicate whether the server is running
 
 # Function to handle client communication
 def handle_client(socket_conn, client_address):    
@@ -70,7 +75,7 @@ def process_request(request):
     
  # This function gets the top headlines based on the client’s request
 def retrieve_headlines(option, key, detail_index):
-    url = "https://newsapi.org/v2/top-headlines?apiKey=4c4e729949bf494baeacabafe0d81b43"
+    url = f"{API__URL}/top-headlines?apiKey={API_KEY}"
     
     if option == '1':  # Search for keywords
         url += f"&q={key}"
@@ -111,7 +116,7 @@ def retrieve_headlines(option, key, detail_index):
 
 #Retrieves news sources filtered by category.
 def retrieve_sources_by_category(category, detail_index):
-    url = f"https://newsapi.org/v2/sources?apiKey=4c4e729949bf494baeacabafe0d81b43"
+    url = f"{API__URL}/sources?apiKey={API_KEY}"
     
     valid_categories = ['business', 'general', 'health', 'science', 'sports', 'technology']
     if category not in valid_categories:
@@ -122,7 +127,7 @@ def retrieve_sources_by_category(category, detail_index):
 
 #Retrieves news sources filtered by country
 def retrieve_sources_by_country(country, detail_index):
-    url = f"https://newsapi.org/v2/sources?apiKey=4c4e729949bf494baeacabafe0d81b43"
+    url = f"https://newsapi.org/v2/sources?apiKey={API_KEY}"
     
     valid_countries = ['au', 'ca', 'jp', 'ae', 'sa', 'kr', 'us', 'ma']
     if country not in valid_countries:
@@ -133,7 +138,7 @@ def retrieve_sources_by_country(country, detail_index):
 
 #Retrieves news sources filtered by language 
 def retrieve_sources_by_language(language, detail_index):
-    url = f"https://newsapi.org/v2/sources?apiKey=4c4e729949bf494baeacabafe0d81b43"
+    url = f"{API__URL}/sources?apiKey={API_KEY}"
     
     valid_languages = ['ar', 'en']
     if language not in valid_languages:
@@ -165,7 +170,7 @@ def get_sources_from_url(url, detail_index):
 
 #Retrieves all available news sources from the API   
 def retrieve_all_sources(detail_index):
-    url = f"https://newsapi.org/v2/sources?apiKey=4c4e729949bf494baeacabafe0d81b43"
+    url = f"{API__URL}/sources?apiKey={API_KEY}"
     return get_sources_from_url(url, detail_index)
 
 # Formats sources into a structured dictionary.
@@ -197,23 +202,45 @@ def save_to_json(data, client_name, option):
         json.dump(data, f, ensure_ascii=False, indent=4)
     print(f"Data saved to {filename}")
 
+# Function to shut down the server with keyboard input
+def shutdown_server_thread(server_socket):
+    global running
+    while running:
+        try:
+            input("Press Enter to shut down the server...\n")
+            print("Shutting down the server...")
+            running = False
+            server_socket.close()
+            sys.exit()
+        except EOFError:
+            continue
+
 # Setting up the server
 def server_setup(host='127.0.0.1', port=49999):
+    global running
+
     s_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s_sock.bind((host, port))
     s_sock.listen()
     print("Server started listening to connections")
+
+    # Start the shutdown thread
+    shutdown_thread = threading.Thread(target=shutdown_server_thread, args=(s_sock,))
+    shutdown_thread.start()
     
-    while True:
-        socket_conn, client_address = s_sock.accept()
-        print(f"Server accepted connection from {client_address}")
-        
-        # Create and start a new thread for the client
-        client_thread = threading.Thread(target=handle_client, args=(socket_conn, client_address))
-        client_thread.start()
-        
-        # Number of active threads for the clients connected
-        print(f"Connection number: {threading.active_count() - 1}")
+    while running:
+            try:
+                socket_conn, client_address = s_sock.accept()
+                print(f"Server accepted connection from {client_address}")
+                
+                # Create and start a new thread for the client
+                client_thread = threading.Thread(target=handle_client, args=(socket_conn, client_address))
+                client_thread.start()
+
+                # Number of active threads for the clients connected
+                print(f"Connection number: {threading.active_count() - 1}")
+            except OSError:  # for socket closure during shutdown
+                break
 
 if __name__ == "__main__":
     server_setup()
