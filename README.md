@@ -1,4 +1,4 @@
-# News API - Client GUI and Server python scripts (ITNE352-Project)
+# News API - Client GUI and Server python scripts
 
 ## Project Discription
 This project requires two sides, the client which will send requests, and the server which will send responses to the client to be displayed then. Our client script utilizes GUI to display the requirements which are the main menu, followed by sub-menus/ The client here will interact with the choices displayed. For retrieveing the news data, the server uses an API (using our API key) based on the user's choices. This is the website it retrieves from: https://newsapi.org/ 
