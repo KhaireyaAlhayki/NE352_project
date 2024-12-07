@@ -320,7 +320,7 @@ def headlines_menu(socket_c, client_name):
                 source_name = article.get('Name', 'Unknown Source')
                 author = article.get('Author', 'Unknown Author')
                 title = article.get('Title', 'No Title')
-                print(f"{idx}. Author: {author} | Title: {title} | (Source: {source_name})")
+                print(f"{idx}. Author: {author} | Title: {title} | (Source Name: {source_name})")
 
              # Allow user to view detailed information
             print("\nEnter headline numbers to display more info, separated by commas (# -1 to go back):")
@@ -420,7 +420,7 @@ def sources_menu(socket_c, client_name):
             print("\nSources Received:")
             for idx, source in enumerate(data_list, 1):
                 name = source.get('Name', 'Unknown Source')
-                print(f"{idx}. {name}")
+                print(f"{idx}. Source Name {name}")
 
             # Allow user to view detailed information
             selected = input("Enter source numbers to display more info, separated by commas (# -1 to go back): ").strip()
