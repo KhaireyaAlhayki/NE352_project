@@ -37,8 +37,39 @@ def handle_client(socket_conn, client_address):
         print("Client disconnected")
         socket_conn.close()
 
+def process_request(request):
+  
+    parts = request.split('-')
+    
+    if len(parts) < 4:
+        return [["Invalid request format"]], None, None
+
+    request_type, option, key, client_name = parts[:4]
+    detail_index = int(parts[4]) if len(parts) == 5 else None
+
+    # Debugging
+    #print(f"Received request: {request_type}-{option}-{key}-{client_name} with detail_index {detail_index}")
+
+    # Check what the client wants (headlines or sources) and call the right function
+    if request_type == '1':  # Headlines
+        return retrieve_headlines(option, key, detail_index), client_name, option
+    elif request_type == '2':  # Sources
+        if key == "":  # Handle the "List all" case (when key is empty)
+            return retrieve_all_sources(detail_index), client_name, option
+        elif option == '1':  # Category
+            return retrieve_sources_by_category(key, detail_index), client_name, option
+        elif option == '2':  # Country
+            return retrieve_sources_by_country(key, detail_index), client_name, option
+        elif option == '3':  # Language
+            return retrieve_sources_by_language(key, detail_index), client_name, option
+        else:
+            return [["Invalid option for sources"]], None, None
+    else:
+        return [["Invalid request type"]], None, None
+    
+    
+ # This function gets the top headlines based on the client’s request
 def retrieve_headlines(option, key, detail_index):
-   
     url = "https://newsapi.org/v2/top-headlines?apiKey=4c4e729949bf494baeacabafe0d81b43"
     
     if option == '1':  # Search for keywords
@@ -78,35 +109,7 @@ def retrieve_headlines(option, key, detail_index):
     except Exception as e:
         return [[f"Error fetching headlines: {e}"]]
 
-def process_request(request):
-  
-    parts = request.split('-')
-    
-    if len(parts) < 4:
-        return [["Invalid request format"]], None, None
-
-    request_type, option, key, client_name = parts[:4]
-    detail_index = int(parts[4]) if len(parts) == 5 else None
-
-    # Debugging: Print the received request and parameters
-    print(f"Received request: {request_type}-{option}-{key}-{client_name} with detail_index {detail_index}")
-
-    if request_type == '1':  # Headlines
-        return retrieve_headlines(option, key, detail_index), client_name, option
-    elif request_type == '2':  # Sources
-        if key == "":  # Handle the "List all" case (when key is empty)
-            return retrieve_all_sources(detail_index), client_name, option
-        elif option == '1':  # Category
-            return retrieve_sources_by_category(key, detail_index), client_name, option
-        elif option == '2':  # Country
-            return retrieve_sources_by_country(key, detail_index), client_name, option
-        elif option == '3':  # Language
-            return retrieve_sources_by_language(key, detail_index), client_name, option
-        else:
-            return [["Invalid option for sources"]], None, None
-    else:
-        return [["Invalid request type"]], None, None
-
+#Retrieves news sources filtered by category.
 def retrieve_sources_by_category(category, detail_index):
     url = f"https://newsapi.org/v2/sources?apiKey=4c4e729949bf494baeacabafe0d81b43"
     
@@ -117,6 +120,7 @@ def retrieve_sources_by_category(category, detail_index):
     url += f"&category={category}"
     return get_sources_from_url(url, detail_index)
 
+#Retrieves news sources filtered by country
 def retrieve_sources_by_country(country, detail_index):
     url = f"https://newsapi.org/v2/sources?apiKey=4c4e729949bf494baeacabafe0d81b43"
     
@@ -127,6 +131,7 @@ def retrieve_sources_by_country(country, detail_index):
     url += f"&country={country}"
     return get_sources_from_url(url, detail_index)
 
+#Retrieves news sources filtered by language 
 def retrieve_sources_by_language(language, detail_index):
     url = f"https://newsapi.org/v2/sources?apiKey=4c4e729949bf494baeacabafe0d81b43"
     
@@ -137,13 +142,13 @@ def retrieve_sources_by_language(language, detail_index):
     url += f"&language={language}"
     return get_sources_from_url(url, detail_index)
 
+ #Fetches and formats news sources from the given URL
 def get_sources_from_url(url, detail_index):
     try:
         response = requests.get(url)
         response.raise_for_status()
         #[:15]: number of of sourcses retrieved will not exceed 15 article.
         sources = response.json().get('sources', [])[:15]  
-
 
         if not sources:
             return [["No sources found."]]
@@ -157,11 +162,13 @@ def get_sources_from_url(url, detail_index):
         return [format_source(source) for source in sources]
     except Exception as e:
         return [[f"Error fetching sources: {e}"]]
-    
+
+#Retrieves all available news sources from the API   
 def retrieve_all_sources(detail_index):
     url = f"https://newsapi.org/v2/sources?apiKey=4c4e729949bf494baeacabafe0d81b43"
     return get_sources_from_url(url, detail_index)
 
+# Formats sources into a structured dictionary.
 def format_source(source):
     return {
         "Name": source.get("name", "N/A"),
@@ -172,6 +179,7 @@ def format_source(source):
         "Country": source.get("country", "N/A")
     }
 
+#Formats headlines into a structured dictionary.
 def format_article(article):
     return {
         "Name": article.get("source", {}).get("name", "N/A"),
@@ -182,6 +190,7 @@ def format_article(article):
         "Published At": article.get("publishedAt", "N/A")
     }
 
+# Function to save the response into a JSON file
 def save_to_json(data, client_name, option):
     filename = f"{client_name}_{option}_{GROUP_ID}.json"
     with open(filename, 'w', encoding='utf-8') as f:
