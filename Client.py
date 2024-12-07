@@ -1,34 +1,226 @@
 import socket
 import json
 import tkinter as tk
-from tkinter import messagebox
-#creat tab
-root=tk.Tk()
-root.geometry("500x400")
-root.title("EchoNews")
-#create label for username and entry
-label = tk.Label(root, text="Enter your username:")
-label.pack(padx=10,pady=10)
-username=tk.Entry(root)
-username.pack(padx=10)
-#main menu label
-main_m=tk.Label(root,text="MAIN MENU:")
-main_m.pack(padx=20)
-#create headlines menu
-headlines_m=tk.Button(root,text="Search by Headlines" )
-headlines_m.pack(padx=20,pady=20)
-#create source menu
-source_m=tk.Button(root,text="Search by sources")
-source_m.pack(padx=20,pady=20)
-#create Quit button
-button=tk.Button(root, text="Quit App", command=quit)
-button.pack(padx=20,pady=20)
+import customtkinter as ctk
+
+# Global UI elements
+user_entry = None
+send_button = None
+scroll_frame = None
+scroll_active = False
+displayed_labels = []
+
+def get_text():
+    '''take the text input from user'''
+    global user_input
+    user_input = user_entry.get()
+    clear_screen()
+    root.quit()
+
+def setup_input():
+    '''add entry to enter the choice and button to send the text'''
+    global user_entry, send_button
+    user_entry = ctk.CTkEntry(
+        root,
+        placeholder_text="Type here...",
+        width=400,
+        height=50,
+        fg_color="white",
+        text_color="black",
+        font=("Arial", 16),
+    )
+    user_entry.pack(anchor=tk.CENTER, pady=10)
+
+    send_button = ctk.CTkButton(
+        root,
+        text="Submit",
+        fg_color="white",
+        text_color="black",
+        command=get_text,
+    )
+    send_button.pack(anchor=tk.CENTER, pady=10)
+    root.mainloop()
+
+def show_message(message, padding=(10, 10)):
+    '''Displays messages on the screen'''
+    if not scroll_active:
+        label = tk.Label(root, text=message, bg="#E8E8E8", font=("Arial", 14))
+        label.pack(pady=padding)
+        displayed_labels.append(label)
+    else:
+        create_scrollable_area(message)
+
+def create_scrollable_area(content):
+    ''' create a frame inside it a textbox '''
+    global scroll_frame
+    scroll_frame = ctk.CTkFrame(root, width=800, height=300)
+    scroll_frame.pack(pady=10)
+    text_box = ctk.CTkTextbox(
+        scroll_frame,
+        wrap=tk.WORD,
+        font=("Arial", 14),
+        fg_color="white",
+        text_color="black",
+    )
+    text_box.insert(tk.END, content)
+    text_box.configure(state=tk.DISABLED)
+    text_box.pack(fill=tk.BOTH, expand=True)
+
+def clear_screen():
+    '''Clear the screen for the next UI interaction'''
+    global displayed_labels, user_entry, send_button, scroll_frame
+    for label in displayed_labels:
+        label.destroy()
+    displayed_labels.clear()
+    user_entry.destroy()
+    send_button.destroy()
+    if scroll_active:
+       scroll_frame.destroy()
+
+def main():
+    '''Main application '''
+    try:
+        global root, scroll_active
+
+        # Initialize the GUI
+        root = tk.Tk()
+        root.geometry("800x600")
+        root.configure(background="#E8E8E8")
+        root.title("News Application")
+
+        # Establish connection to the server
+        HOST= "127.0.0.1"
+        PORT= 49999
+        socket_c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        
+        show_message("Welcome to the News Application", padding=(150, 20))
+        show_message("Please enter your username:")
+        setup_input()
+        username = user_input
+
+        try:
+            socket_c.connect((HOST, PORT))
+            socket_c.send(username.encode('utf-8'))
+            
+        # Handle the error 
+        except:
+            show_message("Unable to connect to the server. Please try again later.")
+            root.update()
+        
+        # The types
+        categories={
+         '1':'business',
+         '2':'general',
+         '3':'health',
+         '4':'science',
+         '5':'sports',
+         '6':'technology'                        
+        }
+        countries={
+            '1':'au',
+            '2':'ca',
+            '3':'jp',
+            '4':'ae',
+            '5':'sa',
+            '6':'kr',
+            '7':'us',
+            '8':'ma'  
+        } 
+        languages={
+            '1':'ar',
+            '2':'en'
+        }
+
+        # Main menu loop
+        while True:
+            clear_screen()
+            show_message("Main Menu", padding=(20, 10))
+            show_message("""
+            1-Search headlines
+            2-List of sources
+            3-Quit
+            """)
+            setup_input()
+            user_choice = user_input
+
+            # Search Headlines
+            if user_choice == "1":  
+                scroll_active = False
+                while True:
+                    clear_screen()
+                    show_message("Headline Menu", padding=(20, 10))
+                    show_message("""
+                    1-Search for keywords
+                    2-Search by category
+                    3-Search by country
+                    4-List all new headlines
+                    5-Back to the main menu
+                    """)
+                    setup_input()
+                    choice = user_input
+
+                    if choice=='1':
+                        show_message("Enter a keyword: ")
+                        show_message("enter 0 to go back in menu")
+                        setup_input()
+                        option=user_input
+                        if option=='0':
+                            break
+                    elif choice=='2':
+                        while True:
+                            show_message("Enter a category: ")
+                            show_message("""
+                                1-business
+                                2-general
+                                3-health
+                                4-science
+                                5-sports
+                                6-technology
+                                """)
+                            show_message("enter 0 to go back in menu")
+                            setup_input()
+                            option=user_input
+                            if option=='0' or option in categories:
+                                break
+                            else:
+                                show_message("no such category...try again")
+                    elif choice=='3':
+                        while True:
+                            show_message("Enter a country: ")
+                            show_message("""
+                                1-au
+                                2-ca
+                                3-jp
+                                4-ae
+                                5-sa
+                                6-kr
+                                7-us
+                                8-ma
+                                """)
+                            show_message("enter 0 to go back in menu")
+                            setup_input()
+                            option=user_input
+                            if option=='0' or option in countries:
+                                break
+                            else:
+                                show_message("no such country...try again")
+                    elif choice=='4':
+                        pass
+                    
+                    elif choice == "5":
+                        break
+                    else:
+                        show_message("Invalid choice. Please try again.", padding=(5, 5))
+
+        socket_c.close()
+        root.quit()
+    except Exception as e:
+        print("An error occurred:", str(e))
 
 
-
-
-
-root.mainloop()
+# Run the program
+if __name__ == "__main__":
+    main()
 
 
 parameter={}
