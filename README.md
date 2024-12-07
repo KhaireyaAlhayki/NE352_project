@@ -30,10 +30,10 @@ This project requires two sides, the client which will send requests, and the se
 2. Clone this project or download the provided client and server scripts.
 3. Use any editor to write and run the scripts like Visual Studio Code.
 4. Open a terminal (like powershell) in the project directory to test the client and server scripts.
-5. Most of the libraries used are pre-installed libraries, however additional libraries were installed like: requests and customtkinter.
+5. Most of the libraries used are pre-installed libraries, however additional libraries were installed like: requests.
     All you need to do is write the following commands in your terminal
     pip install requests
-    pip install customtkinter
+    
 
 
 ## How to run the system:
