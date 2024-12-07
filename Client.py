@@ -316,11 +316,36 @@ def headlines_menu(socket_c, client_name):
         if data_list:
             print("\nHeadlines Received:")
             for idx, article in enumerate(data_list, 1):
-                print(f"{idx}. {article}")
+                # Display each headline with names of details
+                source_name = article.get('Name', 'Unknown Source')
+                author = article.get('Author', 'Unknown Author')
+                title = article.get('Title', 'No Title')
+                print(f"{idx}. Author: {author} | Title: {title} | (Source: {source_name})")
+
+             # Allow user to view detailed information
+            print("\nEnter headline numbers to display more info, separated by commas (# -1 to go back):")
+            selected = input("Enter your choice: ").strip()
+            if selected == "-1":
+                return
+            selected_indices = [int(i) - 1 for i in selected.split(",") if i.isdigit()]
+            for idx in selected_indices:
+                if 0 <= idx < len(data_list):
+                    article = data_list[idx]
+                    print("\nDetailed Info:")
+                    print(f"Source: {article.get('Name', 'Unknown Source')}")
+                    print(f"Author: {article.get('Author', 'Unknown Author')}")
+                    print(f"Title: {article.get('Title', 'No Title')}")
+                    print(f"URL: {article.get('URL', 'No URL')}")
+                    print(f"Description: {article.get('Description', 'No Description')}")
+                    published_at = article.get('Published At', 'Unknown Date/Time')
+                    if published_at != 'Unknown Date/Time':
+                        print(f"Published Date: {published_at[:10]}")
+                        print(f"Published Time: {published_at[11:19]}")
         else:
             print("No headlines found.")
     except Exception as e:
         print(f"Error deserializing response: {e}")
+
 
 def sources_menu(socket_c, client_name):
     print("\nSources Menu:")
@@ -388,13 +413,30 @@ def sources_menu(socket_c, client_name):
     socket_c.send(request.encode())
 
     # Receive and process the server response
+    response = receive_full_data(socket_c)
     try:
-        response = receive_full_data(socket_c)
         data_list = pickle.loads(response)  # Deserialize the binary data
         if data_list:
             print("\nSources Received:")
             for idx, source in enumerate(data_list, 1):
-                print(f"{idx}. {source}")
+                name = source.get('Name', 'Unknown Source')
+                print(f"{idx}. {name}")
+
+            # Allow user to view detailed information
+            selected = input("Enter source numbers to display more info, separated by commas (# -1 to go back): ").strip()
+            if selected == "-1":
+                return
+            selected_indices = [int(i) - 1 for i in selected.split(",") if i.isdigit()]
+            for idx in selected_indices:
+                if 0 <= idx < len(data_list):
+                    source = data_list[idx]
+                    print("\nDetailed Info:")
+                    print(f"Name: {source.get('Name', 'Unknown Source')}")
+                    print(f"Country: {source.get('Country', 'Unknown Country')}")
+                    print(f"Description: {source.get('Description', 'No Description')}")
+                    print(f"URL: {source.get('URL', 'No URL')}")
+                    print(f"Category: {source.get('Category', 'No Category')}")
+                    print(f"Language: {source.get('Language', 'Unknown Language')}")
         else:
             print("No sources found.")
     except Exception as e:
