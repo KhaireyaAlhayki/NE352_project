@@ -1,406 +1,34 @@
 import socket
-import json
 import pickle
 import tkinter as tk
-import customtkinter as ctk
+from tkinter import messagebox
 
-# Global UI elements
-user_entry = None
-send_button = None
-scroll_frame = None
-scroll_active = False
-displayed_labels = []
-
-def get_text():
-    '''take the text input from user'''
-    global user_input
-    user_input = user_entry.get()
-    clear_screen()
-    root.quit()
-
-def setup_input():
-    '''add entry to enter the choice and button to send the text'''
-    global user_entry, send_button
-    user_entry = ctk.CTkEntry(
-        root,
-        placeholder_text="Type here...",
-        width=400,
-        height=50,
-        fg_color="white",
-        text_color="black",
-        font=("Arial", 16),
-    )
-    user_entry.pack(anchor=tk.CENTER, pady=10)
-
-    send_button = ctk.CTkButton(
-        root,
-        text="Submit",
-        fg_color="white",
-        text_color="black",
-        command=get_text,
-    )
-    send_button.pack(anchor=tk.CENTER, pady=10)
-    root.mainloop()
-
-def show_message(message, padding=(10, 10)):
-    '''Displays messages on the screen'''
-    if not scroll_active:
-        label = tk.Label(root, text=message, bg="#E8E8E8", font=("Arial", 14))
-        label.pack(pady=padding)
-        displayed_labels.append(label)
-    else:
-        create_scrollable_area(message)
-
-def create_scrollable_area(content):
-    ''' create a frame inside it a textbox '''
-    global scroll_frame
-    scroll_frame = ctk.CTkFrame(root, width=800, height=300)
-    scroll_frame.pack(pady=10)
-    text_box = ctk.CTkTextbox(
-        scroll_frame,
-        wrap=tk.WORD,
-        font=("Arial", 14),
-        fg_color="white",
-        text_color="black",
-    )
-    text_box.insert(tk.END, content)
-    text_box.configure(state=tk.DISABLED)
-    text_box.pack(fill=tk.BOTH, expand=True)
-
-def clear_screen():
-    '''Clear the screen for the next UI interaction'''
-    global displayed_labels, user_entry, send_button, scroll_frame
-    for label in displayed_labels:
-        label.destroy()
-    displayed_labels.clear()
-    user_entry.destroy()
-    send_button.destroy()
-    if scroll_active:
-       scroll_frame.destroy()
-
-def main():
-    '''Main application '''
-    try:
-        global root, scroll_active
-
-        # Initialize the GUI
-        root = tk.Tk()
-        root.geometry("800x600")
-        root.configure(background="#E8E8E8")
-        root.title("News Application")
-
-        # Establish connection to the server
-        HOST= "127.0.0.1"
-        PORT= 49999
-        socket_c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        
-        show_message("Welcome to the News Application", padding=(150, 20))
-        show_message("Please enter your username:")
-        setup_input()
-        username = user_input
-
-        try:
-            socket_c.connect((HOST, PORT))
-            socket_c.send(username.encode('utf-8'))
-            
-        # Handle the error 
-        except:
-            show_message("Unable to connect to the server. Please try again later.")
-            root.update()
-        
-        # The types
-        categories={
-         '1':'business',
-         '2':'general',
-         '3':'health',
-         '4':'science',
-         '5':'sports',
-         '6':'technology'                        
-        }
-        countries={
-            '1':'au',
-            '2':'ca',
-            '3':'jp',
-            '4':'ae',
-            '5':'sa',
-            '6':'kr',
-            '7':'us',
-            '8':'ma'  
-        } 
-        languages={
-            '1':'ar',
-            '2':'en'
-        }
-
-        # Main menu loop
-        while True:
-            clear_screen()
-            show_message("Main Menu", padding=(20, 10))
-            show_message("""
-            1-Search headlines
-            2-List of sources
-            3-Quit
-            """)
-            setup_input()
-            user_choice = user_input
-
-            # Search Headlines
-            if user_choice == "1":  
-                scroll_active = False
-                while True:
-                    clear_screen()
-                    show_message("Headline Menu", padding=(20, 10))
-                    show_message("""
-                    1-Search for keywords
-                    2-Search by category
-                    3-Search by country
-                    4-List all new headlines
-                    5-Back to the main menu
-                    """)
-                    setup_input()
-                    choice = user_input
-
-                    if choice=='1':
-                        show_message("Enter a keyword: ")
-                        show_message("enter 0 to go back in menu")
-                        setup_input()
-                        option=user_input
-                        if option=='0':
-                            break
-                    elif choice=='2':
-                        while True:
-                            show_message("Enter a category: ")
-                            show_message("""
-                                1-business
-                                2-general
-                                3-health
-                                4-science
-                                5-sports
-                                6-technology
-                                """)
-                            show_message("enter 0 to go back in menu")
-                            setup_input()
-                            option=user_input
-                            if option=='0' or option in categories:
-                                break
-                            else:
-                                show_message("no such category...try again")
-                    elif choice=='3':
-                        while True:
-                            show_message("Enter a country: ")
-                            show_message("""
-                                1-au
-                                2-ca
-                                3-jp
-                                4-ae
-                                5-sa
-                                6-kr
-                                7-us
-                                8-ma
-                                """)
-                            show_message("enter 0 to go back in menu")
-                            setup_input()
-                            option=user_input
-                            if option=='0' or option in countries:
-                                break
-                            else:
-                                show_message("no such country...try again")
-                    elif choice=='4':
-                        pass
-                    
-                    elif choice == "5":
-                        break
-                    else:
-                        show_message("Invalid choice. Please try again.", padding=(5, 5))
-
-        socket_c.close()
-        root.quit()
-    except Exception as e:
-        print("An error occurred:", str(e))
-
-
-# Run the program
-if __name__ == "__main__":
-    main()
-
-
-
-
-
-
-parameter={}
-categories={
-    '1':'business',
-    '2':'general',
-    '3':'health',
-    '4':'science',
-    '5':'sports',
-    '6':'technology'                        
+# variables for categories, countries, and languages
+categories = {
+    '1': 'business',
+    '2': 'general',
+    '3': 'health',
+    '4': 'science',
+    '5': 'sports',
+    '6': 'technology'
 }
-countries={
-    '1':'au',
-    '2':'ca',
-    '3':'jp',
-    '4':'ae',
-    '5':'sa',
-    '6':'kr',
-    '7':'us',
-    '8':'ma'  
-} 
-languages={
-    '1':'ar',
-    '2':'en'
+countries = {
+    '1': 'au',
+    '2': 'ca',
+    '3': 'jp',
+    '4': 'ae',
+    '5': 'sa',
+    '6': 'kr',
+    '7': 'us',
+    '8': 'ma'
 }
-
-def main_menu():
-    print("\nMain Menu: ")
-    print("""
-    1-Search headlines
-    2-List of sources
-    3-Quit
-    """)
-    choice = int(input("Enter the number of your choice: "))
-    return choice
-
-def headlines_menu(socket_c, client_name):
-    print("\nHeadlines Menu:")
-    print("""
-    1-Search for keywords
-    2-Search by category
-    3-Search by country
-    4-List all new headlines
-    5-Back to the main menu
-    """)
-
-    option = int(input("Enter the number of your option: "))
-    while option not in range(1, 6):
-        print("Invalid option. Please choose a number between 1 and 5.")
-        option = int(input("Enter the number of your option: "))
-
-    request = ""  # Initialize request variable
-    detail_index = None  # Initialize detail index
-
-    if option == 1:  # Search for keywords
-        keyword = input("Enter the keywords: ")
-        request = f"1-1-{keyword}-{client_name}"
-    elif option == 2:  # Search by category
-        print("\nAvailable Categories:")
-        for key, value in categories.items():
-            print(f"{key}-{value}")
-        category_o = input("Enter the category number (1-6): ")
-        if category_o in categories:
-            category = categories[category_o]
-            request = f"1-2-{category}-{client_name}"
-    elif option == 3:  # Search by country
-        print("\nAvailable Countries:")
-        for key, value in countries.items():
-            print(f"{key}-{value}")
-        country_o = input("Enter the country number (1-8): ")
-        if country_o in countries:
-            country = countries[country_o]
-            request = f"1-3-{country}-{client_name}"
-        else:
-            print("Invalid country selection.")
-            return
-    elif option == 4:  # List all new headlines
-        request = f"1-4--{client_name}"
-    elif option == 5:  # Back to the main menu
-        return
-
-    print("Sending request:", request)
-    socket_c.send(request.encode())
-
-    response = receive_full_data(socket_c)  # Receive full response
-    try:
-        data_list = pickle.loads(response)  # Deserialize the binary data
-        if data_list:
-            print("\nHeadlines Received:")
-            for idx, article in enumerate(data_list, 1):
-                print(f"{idx}. {article}")
-        else:
-            print("No headlines found.")
-    except Exception as e:
-        print(f"Error deserializing response: {e}")
-
-def sources_menu(socket_c, client_name):
-    print("\nSources Menu:")
-    print("""
-    1-Search by category
-    2-Search by country
-    3-Search by language
-    4-List all
-    5-Back to the main menu
-    """)
-    option = int(input("Enter the number of your option:"))
-    
-    # Handle invalid options
-    while option not in range(1, 6):
-        print("Invalid option. Please choose a number between 1 and 5.")
-        option = int(input("Enter the number of your option: "))
-
-    request = ""  # Initialize request variable
-    detail_index = None  # Initialize detail index
-
-    if option == 1:
-        print("""
-        1-business
-        2-general
-        3-health
-        4-science
-        5-sports
-        6-technology
-        """)
-        category_o = input("Enter the category number (1-6): ")
-        if category_o in categories:
-            category = categories[category_o]
-            request = f"2-1-{category}-{client_name}"
-    elif option == 2:
-        print("""
-        1-au
-        2-ca
-        3-jp
-        4-ae
-        5-sa
-        6-kr
-        7-us
-        8-ma
-        """)
-        country_o = input("Enter the country number (1-8): ")
-        if country_o in countries:
-            country = countries[country_o]
-            request = f"2-2-{country}-{client_name}"
-    elif option == 3:
-        print("""
-        1-ar
-        2-en 
-        """)
-        languages_o = input("Enter the language number (1-2): ")
-        if languages_o in languages:
-            language = languages[languages_o]
-            request = f"2-3-{language}-{client_name}"
-    elif option == 4:
-        request = f"2-4--{client_name}"
-    elif option == 5:
-        return
-
-    
-    print("Sending request:", request)
-    socket_c.send(request.encode())
-
-    # Receive and process the server response
-    try:
-        response = receive_full_data(socket_c)
-        data_list = pickle.loads(response)  # Deserialize the binary data
-        if data_list:
-            print("\nSources Received:")
-            for idx, source in enumerate(data_list, 1):
-                print(f"{idx}. {source}")
-        else:
-            print("No sources found.")
-    except Exception as e:
-        print(f"Error deserializing response: {e}")
+languages = {
+    '1': 'ar',
+    '2': 'en'
+}
 
 def receive_full_data(socket_c):
+    """handle all the receiving data from the server"""
     response = b""
     while True:
         data = socket_c.recv(4096)
@@ -409,38 +37,281 @@ def receive_full_data(socket_c):
             break
     return response
 
-def client():
-    try:
-        socket_c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        socket_c.connect(("127.0.0.1", 49999))
-        print("Connected to the server.")
+# Main Client Application
+class main:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("News Application")
+        self.root.geometry("800x600")
+        self.root.configure(background="#a3c1e3")
         
-        client_name = input("Enter username: ")
-        socket_c.send(client_name.encode())
-        
-        welcome_message = socket_c.recv(1024).decode('utf-8')
-        print(welcome_message)
+        # Socket connection
+        self.socket_c = None
+        self.username = None
 
-        while True:
-            choice = main_menu()
-            if choice == 1:
-                headlines_menu(socket_c, client_name)
-            elif choice == 2:
-                sources_menu(socket_c, client_name)
-            elif choice == 3:
-                print("Quitting...")
-                break
+        # Initialize login screen
+        self.create_login_screen()
+
+    def connect_to_server(self):
+        """Attempt to connect to the server."""
+        try:
+            self.socket_c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.socket_c.connect(("127.0.0.1", 49999))
+            print("Connected to the server.")
+        # Handle the error  
+        except ConnectionRefusedError:
+            messagebox.showerror("Error", "Failed to connect to the server.")
+            self.root.destroy()
+
+    def create_login_screen(self):
+        """Create the login screen for username entry."""
+        self.clear_screen()
+        tk.Label(self.root, text="Welcome to the News liabrary",bg="#a3c1e3",font=("Arial", 18)).pack(pady=20)
+        tk.Label(self.root, text="Enter your username:",bg="#a3c1e3",font=("Arial", 16)).pack(pady=20)
+        self.username_entry = tk.Entry(self.root, font=("Arial", 14))
+        self.username_entry.pack(pady=10)
+
+        tk.Button(self.root, text="Submit", command=self.handle_login, font=("Arial", 14)).pack(pady=20)
+
+    def handle_login(self):
+        """Send the username to the server and get a welcome message."""
+        username = self.username_entry.get().strip()
+        if username:
+            self.username = username
+            self.connect_to_server()
+            self.socket_c.send(self.username.encode())
+            welcome_message = self.socket_c.recv(1024).decode("utf-8")
+            messagebox.showinfo("Welcome", welcome_message)
+            self.create_main_menu()
+        else:
+            messagebox.showwarning("Invalid Input", "Please enter a valid username.")
+
+    def create_main_menu(self):
+        """Create the main menu screen."""
+        self.clear_screen()
+
+        tk.Label(self.root, text="Main Menu",bg="#a3c1e3", font=("Arial", 20)).pack(pady=20)
+
+        tk.Button(self.root, text="Search Headlines", font=("Arial", 14), command=self.headlines_menu).pack(pady=10)
+        tk.Button(self.root, text="List of Sources", font=("Arial", 14), command=self.sources_menu).pack(pady=10)
+        tk.Button(self.root, text="Quit", font=("Arial", 14), command=self.root.quit).pack(pady=10)
+
+    def headlines_menu(self):
+        """Create the headlines menu."""
+        self.clear_screen()
+
+        tk.Label(self.root, text="Headlines Menu",bg="#a3c1e3", font=("Arial", 20)).pack(pady=20)
+
+        tk.Button(self.root, text="Search for Keywords", font=("Arial", 14),
+                  command=lambda: self.input_prompt("Enter Keywords:", "1-1")).pack(pady=10)
+        tk.Button(self.root, text="Search by Category", font=("Arial", 14),
+                  command=lambda: self.select_from_list("Select Category", categories, "1-2")).pack(pady=10)
+        tk.Button(self.root, text="Search by Country", font=("Arial", 14),
+                  command=lambda: self.select_from_list("Select Country", countries, "1-3")).pack(pady=10)
+        tk.Button(self.root, text="List All Headlines", font=("Arial", 14),
+                  command=lambda: self.send_request("1-4", "")).pack(pady=10)
+        tk.Button(self.root, text="Back to Main Menu", font=("Arial", 14), command=self.create_main_menu).pack(pady=10)
+
+    def sources_menu(self):
+        """Create the sources menu."""
+        self.clear_screen()
+
+        tk.Label(self.root, text="Sources Menu",bg="#a3c1e3", font=("Arial", 20)).pack(pady=20)
+
+        tk.Button(self.root, text="Search by Category", font=("Arial", 14),
+                  command=lambda: self.select_from_list("Select Category", categories, "2-1")).pack(pady=10)
+        tk.Button(self.root, text="Search by Country", font=("Arial", 14),
+                  command=lambda: self.select_from_list("Select Country", countries, "2-2")).pack(pady=10)
+        tk.Button(self.root, text="Search by Language", font=("Arial", 14),
+                  command=lambda: self.select_from_list("Select Language", languages, "2-3")).pack(pady=10)
+        tk.Button(self.root, text="List All Sources", font=("Arial", 14),
+                  command=lambda: self.send_request("2-4", "")).pack(pady=10)
+        tk.Button(self.root, text="Back to Main Menu", font=("Arial", 14), command=self.create_main_menu).pack(pady=10)
+
+    def input_prompt(self, prompt_text, request_type):
+        """Prompt the user to enter keyword."""
+        self.clear_screen()
+
+        tk.Label(self.root, text=prompt_text,bg="#a3c1e3", font=("Arial", 16)).pack(pady=20)
+        input_entry = tk.Entry(self.root, font=("Arial", 14))
+        input_entry.pack(pady=10)
+
+        tk.Button(self.root, text="Submit", font=("Arial", 14),
+                  command=lambda: self.send_request(request_type, input_entry.get().strip())).pack(pady=10)
+        tk.Button(self.root, text="Back", font=("Arial", 14), command=self.headlines_menu).pack(pady=10)
+
+    def select_from_list(self, title, options, request_type):
+        """Display a list for the user to select from."""
+        self.clear_screen()
+
+        tk.Label(self.root, text=title,bg="#a3c1e3", font=("Arial", 16)).pack(pady=20)
+
+        for key, value in options.items():
+            tk.Button(self.root, text=value.capitalize(), font=("Arial", 14),
+                      command=lambda value=value: self.send_request(request_type, value)).pack(pady=5)
+
+        tk.Button(self.root, text="Back to the main menu", font=("Arial", 14), command=self.create_main_menu).pack(pady=5)
+
+    def send_request(self, request_type, parameter):
+        """Send a request to the server."""
+        request = f"{request_type}-{parameter}-{self.username}"
+        print("Sending request:", request)
+        self.socket_c.send(request.encode())
+
+        # Receive and process the response
+        response = receive_full_data(self.socket_c)
+        try:
+            data_list = pickle.loads(response)
+            # For headlines requests
+            if request_type.startswith("1"):  
+                self.display_headlines(data_list)
+            # For sources requests
+            elif request_type.startswith("2"):  
+                self.display_sources(data_list)
+        except Exception as e:
+            messagebox.showerror("Error", f"Error processing response: {e}")
+
+    def display_headlines(self, headlines_list):
+      """Display the list of headlines."""
+      self.clear_screen()
+
+      tk.Label(self.root, text="Headlines Received",bg="#a3c1e3", font=("Arial", 16)).pack(pady=20)
+
+      if not headlines_list:
+          # Handling of empty data
+          tk.Label(self.root, text="No headlines found.",bg="#a3c1e3", font=("Arial", 14)).pack(pady=10)
+          tk.Button(self.root, text="Back to the main menu", font=("Arial", 14), command=self.create_main_menu).pack(pady=2)
+          return
+
+      results_box = tk.Text(self.root, font=("Arial", 14), wrap="word", height=20)
+      results_box.pack(padx=10, pady=10)
+
+      for idx, article in enumerate(headlines_list, 1):
+          # Check if the entry is a dictionary
+          if isinstance(article, dict):  
+              source_name = article.get('Name', 'Unknown Source')
+              author = article.get('Author', 'Unknown Author')
+              title = article.get('Title', 'No Title')
+              results_box.insert("end", f"{idx}. Author: {author} | Title: {title} | (Source: {source_name})\n")
+           # Entry is not a dictionary, handle it as plain text
+          else: 
+              results_box.insert("end", f"{idx}. {article}\n")
+
+      tk.Label(self.root, text="Enter headline numbers for details (comma-separated):",bg="#a3c1e3", font=("Arial", 14)).pack(pady=10)
+      detail_entry = tk.Entry(self.root, font=("Arial", 14))
+      detail_entry.pack(pady=5)
+
+      tk.Button(
+          self.root,
+          text="View Details",
+          font=("Arial", 12),
+          command=lambda: self.display_detailed_headlines(headlines_list, detail_entry.get())).pack(pady=5)
+
+      tk.Button(self.root, text="Back to the main menu", font=("Arial", 12), command=self.create_main_menu).pack(pady=10)
+
+    def display_detailed_headlines(self, headlines_list, indices):
+        """Display detailed information for selected headlines."""
+        try:
+            selected_indices = [int(i.strip()) - 1 for i in indices.split(",") if i.strip().isdigit()]
+        except ValueError:
+            messagebox.showerror("Error", "Invalid input. Please enter valid numbers.")
+            return
+
+        self.clear_screen()
+
+        tk.Label(self.root, text="Detailed Headline Information", font=("Arial", 16)).pack(pady=20)
+        details_box = tk.Text(self.root, font=("Arial", 14), wrap="word", height=20)
+        details_box.pack(padx=10, pady=10)
+
+        for idx in selected_indices:
+            if 0 <= idx < len(headlines_list):
+                article = headlines_list[idx]
+                details_box.insert("end", f"Source: {article.get('Name', 'Unknown Source')}\n")
+                details_box.insert("end", f"Author: {article.get('Author', 'Unknown Author')}\n")
+                details_box.insert("end", f"Title: {article.get('Title', 'No Title')}\n")
+                details_box.insert("end", f"URL: {article.get('URL', 'No URL')}\n")
+                details_box.insert("end", f"Description: {article.get('Description', 'No Description')}\n")
+                published_at = article.get('Published At', 'Unknown Date/Time')
+                if published_at != 'Unknown Date/Time':
+                    details_box.insert("end", f"Published Date: {published_at[:10]}\n")
+                    details_box.insert("end", f"Published Time: {published_at[11:19]}\n")
+                details_box.insert("end", "\n" + "-" * 50 + "\n\n")
             else:
-                print("Invalid option. Try again.")
-        socket_c.close()
+                details_box.insert("end", f"Invalid index: {idx + 1}\n")
 
-    # Handle errors
-    except ConnectionResetError:
-        print("Connection lost.")
-    except ConnectionRefusedError:
-        print("Failed to connect to the server.")
-    except Exception as error_msg:
-        print(f"An error occurred: {error_msg}")
+        tk.Button(self.root, text="Back", font=("Arial", 14), command=self.create_main_menu).pack(pady=10)
+
+    def display_sources(self, sources_list):
+      """Display the list of sources."""
+      self.clear_screen()
+
+      tk.Label(self.root, text="Sources Received",bg="#a3c1e3", font=("Arial", 16)).pack(pady=20)
+
+      if not sources_list:
+          # Handling the empty data
+          tk.Label(self.root, text="No sources found.",bg="#a3c1e3", font=("Arial", 14)).pack(pady=10)
+          tk.Button(self.root, text="Back to the main menu", font=("Arial", 14), command=self.create_main_menu).pack(pady=10)
+          return
+
+      results_box = tk.Text(self.root, font=("Arial", 14), wrap="word", height=20)
+      results_box.pack(padx=10, pady=10)
+
+      for idx, source in enumerate(sources_list, 1):
+          # Check if the entry is a dictionary
+          if isinstance(source, dict):  
+              name = source.get('Name', 'Unknown Source')
+              results_box.insert("end", f"{idx}. Source Name: {name}\n")
+          # Entry is not a dictionary, handle it as plain text
+          else:  
+              results_box.insert("end", f"{idx}. {source}\n")
+
+      tk.Label(self.root, text="Enter source numbers for details (comma-separated):",bg="#a3c1e3", font=("Arial", 14)).pack(pady=10)
+      detail_entry = tk.Entry(self.root, font=("Arial", 14))
+      detail_entry.pack(pady=5)
+
+      tk.Button(
+          self.root,
+          text="View Details",
+          font=("Arial", 12),
+          command=lambda: self.display_detailed_sources(sources_list, detail_entry.get())).pack(pady=5)
+
+      tk.Button(self.root, text="Back to the main menu", font=("Arial", 12), command=self.create_main_menu).pack(pady=10)
+      
+    def display_detailed_sources(self, sources_list, indices):
+        """Display detailed information for selected sources."""
+        try:
+            selected_indices = [int(i.strip()) - 1 for i in indices.split(",") if i.strip().isdigit()]
+        except ValueError:
+            messagebox.showerror("Error", "Invalid input. Please enter valid numbers.")
+            return
+
+        self.clear_screen()
+
+        tk.Label(self.root, text="Detailed Source Information",bg="#a3c1e3", font=("Arial", 16)).pack(pady=20)
+        details_box = tk.Text(self.root, font=("Arial", 14), wrap="word", height=20)
+        details_box.pack(padx=10, pady=10)
+
+        for idx in selected_indices:
+            if 0 <= idx < len(sources_list):
+                source = sources_list[idx]
+                details_box.insert("end", f"Name: {source.get('Name', 'Unknown Source')}\n")
+                details_box.insert("end", f"Country: {source.get('Country', 'Unknown Country')}\n")
+                details_box.insert("end", f"Description: {source.get('Description', 'No Description')}\n")
+                details_box.insert("end", f"URL: {source.get('URL', 'No URL')}\n")
+                details_box.insert("end", f"Category: {source.get('Category', 'No Category')}\n")
+                details_box.insert("end", f"Language: {source.get('Language', 'Unknown Language')}\n")
+                details_box.insert("end", "\n" + "-" * 50 + "\n\n")
+            else:
+                details_box.insert("end", f"Invalid index: {idx + 1}\n")
+
+        tk.Button(self.root, text="Back to the main menu", font=("Arial", 14), command=self.create_main_menu).pack(pady=10)
+
+    def clear_screen(self):
+        '''Clear the screen for the next UI interaction'''
+        for widget in self.root.winfo_children():
+            widget.destroy()
 
 if __name__ == "__main__":
-    client()
+    root = tk.Tk()
+    app = main(root)
+    root.mainloop()
