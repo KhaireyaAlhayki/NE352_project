@@ -29,7 +29,7 @@ This project requires two sides, the client which will send requests, and the se
 1. Ensure you have Python 3 installed (https://www.python.org/downloads/).
 2. Clone this project or download the provided client and server scripts.
 3. Use any editor to write and run the scripts like Visual Studio Code.
-4. Open a terminal (like powershell) in the project directory to test the client and server scripts.
+4. Open a terminal (such as powershell or any other terminal) in the project directory to test the client and server scripts.
 5. Most of the libraries used are pre-installed libraries, however additional libraries were installed like: requests.
     All you need to do is write the following commands in your terminal
     pip install requests
@@ -237,6 +237,7 @@ The server accept requests from the connected clients (up to 3 clients can be co
 - requests: Helps the server send requests to the NewsAPI to ask for news and get the results back.
 - json: Handles saving and loading data in JSON format.
 - pickle: Converts (serializes) Python objects into bytes and sends them to the client.
+  
 
 3. Main Functions
 
@@ -249,7 +250,7 @@ a. server_setup
 * Prints how many clients are connected.
 
 b. handle_client
-- What it does: Handles communication with one client.
+- What it does: Handles communication with each (one) client.
 - How it works:
 * Receives the client’s request.
 * Passes the request to the process_request function to figure out what the client needs.
@@ -259,7 +260,7 @@ b. handle_client
 c. process_request
 - What it does: Understands and validates the client’s request.
 - How it works:
-- Breaks the request into different parts (e.g., request type, category, client name).
+- Breaks the request into different parts such as request type, category, and client name.
 - Calls the correct function (like retrieve_headlines or retrieve_all_sources) to handle the request.
 - Checks for errors like invalid formats or unsupported options.
 
@@ -272,7 +273,7 @@ d. retrieve_headlines
 
 e. format_article and format_source
 - What they do: Turn raw news data into easy-to-read dictionaries.
-- Why it’s useful: Makes the data easier to send, read, and save.
+- Why it is useful: Makes the data easier to send, read, and save.
 
 f. save_to_json
 - What it does: Saves the response data to a .json file.
