@@ -303,4 +303,4 @@ Big thanks to Dr. Mohamed Almeer and our team for the support and collaboration,
 
 
 ## Conclusion
-- At the end of this project, our understanding of programming and networking concepts has increased. We have gained good knowledge by adding client-server communication and external APIs. All project objectives have been successfully achieved and a GUI has been added to improve the overall look of the code and to provide a more user-friendly environment. With the support of friends and mentor, we have overcome the challenges. We are happy with the result and grateful for the learning opportunities this project has provided.
+- By completing this project, we improved our understanding of programming and networking concepts in Python. We learned a lot by adding client-server communication and using external APIs. Moreover, we added a GUI to make the project look better and easier to use. With our team's support and encouragement, we overcame the challenges we faced along the way. Overall, we are happy with the result and grateful for everything we learned during this project.
