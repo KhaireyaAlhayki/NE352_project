@@ -282,7 +282,7 @@ f. save_to_json
 * Writes the response into the file in a structured desired way.
 
 ##  Additional concepts
-* GUI:
+# GUI:
 - The project allows users to interact with a news server through a Graphical User Interface (GUI) that created using the Tkinter library.By offering a simple and engaging method of accessing news headlines and sources.
 - The original project relied on a command-line interface, which can be less engaging and user-friendly.The GUI adds: Buttons, labels, and input fields which easy to use
 - The Core Components of the GUI:
@@ -293,15 +293,25 @@ f. save_to_json
 5. Detailed Views
 - The GUI sends requests to the server by using :
 * Input fields
-* Buttons 
+* Buttons
 - Server responses are processed and displayed in text boxes.
 - For future Improvements:
 * To improve the application's visual attractiveness, add unique themes.
 * Enhanced adaptability to various screen sizes.
+- we created functions to helps us as we mentioned before in the client.py describtion.This functions which help as in the creation of the main window are:
+        root = tk.Tk() --> for Creates the main application window
+        app = main(root) --> Create an instance of the Main class
+        root.mainloop()--> it's for Start the Tkinter event loop to display the window and respond to user actions (In short: RUN THE APPLICATION)
+        self.root = root --> for Assigns the 'root' argument to the instance variable 'self.root'
+        self.root.title("News Application") --> for Name the window 
+        self.root.geometry("800x600") --> for Set the size of the window
+        self.root.configure(background="#a3c1e3") --> for change the color of the window
+  
+         
 
 ## Acknowledgments
 Big thanks to Dr. Mohamed Almeer and our team for the support and collaboration, which made the successful completion of this project possible with smooth progress and significant outcomes.
 
 
 ## Conclusion
-- By completing this project, we improved our understanding of programming and networking concepts in Python. We learned a lot by adding client-server communication and using external APIs. Moreover, we added a GUI to make the project look better and easier to use. With our team's support and encouragement, we overcame the challenges we faced along the way. Overall, we are happy with the result and grateful for everything we learned during this project.
+By completing this project, we improved our understanding of programming and networking concepts in Python. We learned a lot by adding client-server communication and using external APIs. Moreover, we added a GUI to make the project look better and easier to use. With our team's support and encouragement, we overcame the challenges we faced along the way. Overall, we are happy with the result and grateful for everything we learned during this project.
