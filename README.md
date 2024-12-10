@@ -298,14 +298,14 @@ f. save_to_json
 - For future Improvements:
 * To improve the application's visual attractiveness, add unique themes.
 * Enhanced adaptability to various screen sizes.
-- we created functions to helps us as we mentioned before in the client.py describtion.This functions which help as in the creation of the main window are:
-* root = tk.Tk() --> for Creates the main application window
+- we created functions to help us as we mentioned before in the client.py description. The functions which help in the creation of the main window are:
+* root = tk.Tk() --> Creates the main application window
 * app = main(root) --> Create an instance of the Main class
-* root.mainloop()--> it's for Start the Tkinter event loop to display the window and respond to user actions (In short: RUN THE APPLICATION)
+* root.mainloop()--> it is for starting the Tkinter event loop to display the window and respond to user actions (In short: RUN THE APPLICATION)
 * self.root = root --> for Assigns the 'root' argument to the instance variable 'self.root'
-* self.root.title("News Application") --> for Name the window 
-* self.root.geometry("800x600") --> for Set the size of the window
-* self.root.configure(background="#a3c1e3") --> for change the color of the window
+* self.root.title("News Application") --> for Naming the window 
+* self.root.geometry("800x600") --> for setting the size of the window
+* self.root.configure(background="#a3c1e3") --> for changing the color of the window
   
          
 
