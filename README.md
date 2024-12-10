@@ -39,7 +39,7 @@ This project requires two sides, the client which will send requests, and the se
 ## How to run the system:
 First, open any editor that works for python such as Visual Studio Code.
 Then, run the server first (by typing python server.py in your terminal)
-After running the client (by typing python client.py in your terminal) you can see the GUI is running and is asking for your username.
+After that, run the client (by typing python client.py in your terminal) so you can see the GUI running and is asking for your username.
 
 ## The scripts
 Here are the client.py and server.py scripts:
