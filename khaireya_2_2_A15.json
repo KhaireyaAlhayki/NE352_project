@@ -1,0 +1,34 @@
+[
+    {
+        "Name": "CBC News",
+        "Description": "CBC News is the division of the Canadian Broadcasting Corporation responsible for the news gathering and production of news programs on the corporation's English-language operations, namely CBC Television, CBC Radio, CBC News Network, and CBC.ca.",
+        "URL": "http://www.cbc.ca/news",
+        "Category": "general",
+        "Language": "en",
+        "Country": "ca"
+    },
+    {
+        "Name": "Financial Post",
+        "Description": "Find the latest happenings in the Canadian Financial Sector and stay up to date with changing trends in Business Markets. Read trading and investing advice from professionals.",
+        "URL": "https://financialpost.com",
+        "Category": "business",
+        "Language": "en",
+        "Country": "ca"
+    },
+    {
+        "Name": "Google News (Canada)",
+        "Description": "Comprehensive, up-to-date Canada news coverage, aggregated from sources all over the world by Google News.",
+        "URL": "https://news.google.com",
+        "Category": "general",
+        "Language": "en",
+        "Country": "ca"
+    },
+    {
+        "Name": "The Globe And Mail",
+        "Description": "The Globe and Mail offers the most authoritative news in Canada, featuring national and international news.",
+        "URL": "https://www.theglobeandmail.com",
+        "Category": "general",
+        "Language": "en",
+        "Country": "ca"
+    }
+]
