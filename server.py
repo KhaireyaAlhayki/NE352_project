@@ -1,3 +1,6 @@
+#Khaireya Husain Khamis Alhaiki - 202208539
+# Zainab Abbas Isa Hasan - 202207120
+
 import socket
 import threading
 import requests
@@ -38,7 +41,7 @@ def handle_client(socket_conn, client_address):
     except Exception as e:
         print(f"Error handling client: {e}")
     finally:
-        print("Client disconnected")
+        print(f"{username} disconnected")
         socket_conn.close()
 
 def process_request(request):
@@ -184,7 +187,7 @@ def format_source(source):
         "Country": source.get("country", "N/A")
     }
 
-#formatting sources retrieved into dictionaries
+#formatting articles retrieved into dictionaries
 def format_article(article):
     return {
         "Name": article.get("source", {}).get("name", "N/A"),
@@ -222,7 +225,7 @@ def server_setup(host='127.0.0.1', port=49999):
 
     s_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s_sock.bind((host, port))
-    s_sock.listen()
+    s_sock.listen(3)
     print("Server started listening to connections")
 
     # Start the shutdown thread
@@ -239,7 +242,7 @@ def server_setup(host='127.0.0.1', port=49999):
                 client_thread.start()
 
                 # Number of active threads for the clients connected
-                print(f"Connection number: {threading.active_count() - 1}")
+                print(f"Connection number: {threading.active_count()- 2}")
             except OSError:  # for socket closure during shutdown
                 break
 
